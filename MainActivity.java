@@ -1,44 +1,50 @@
-package com.example.d18123347.lab6;
+package com.example.d18123347.lab8;
 
-import android.app.Activity;
 import android.database.Cursor;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import android.app.ListActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import java.util.List;
-
 public class MainActivity extends ListActivity {
     /** Called when the activity is first created. */
     DatabaseExample db;
-
-    @Override
+    ListView list;
+    SimpleCursorAdapter myAdapter;
+    Cursor cursor;
     public void onCreate(Bundle savedInstanceState)
     {
-        db = new DatabaseExample(this);
-        db.open();
-        addRows();
-        Cursor c = db.getAllPeople();
-        String[] columns = new String[] {"first_name", "surname", "city"};
-        int[] rowIDs = new int[] {R.id.firstname_entry, R.id.surname_entry, R.id.city_entry};
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.row, c, columns, rowIDs);
 
-        setListAdapter(adapter);
+        db = new DatabaseExample(this);
 
-        Log.i("test", "number of rows returned are" + c.getCount());
+        db.open();
+
+        addRows();
+
+        cursor = db.getCityPerson("Dublin");
+        Log.i("test", "number of rows returned are" + cursor.getCount());
+        String[] col = new String[] {"first_name","surname","city"};
+        int[] id = new int[] {R.id.first_name,R.id.surname,R.id.city};
+        myAdapter = new SimpleCursorAdapter(this, R.layout.row, cursor, col, id);
+        setListAdapter(myAdapter);
 
         db.close();
 
+    }
+
+    public void onListItemClick(ListView list, View v, int position, long id){
+        super.onListItemClick(list,v,position,id);
+        Cursor cursor = (Cursor) myAdapter.getItem(position);
+        //int columnIndex = cursor.getColumnIndex("first_name");
+        String myName = cursor.getString(1);
+        //Log.i("test", "the value of column index is " + columnIndex );
+        Log.i("test", "the value of mystring is " + myName);
+        Toast.makeText(this, myName, Toast.LENGTH_LONG).show();
     }
 
     //---add some people---
@@ -54,9 +60,17 @@ public class MainActivity extends ListActivity {
                 "Sarah",
                 "Brown",
                 "Monaghan");
+
+        id = db.insertPerson(
+                "Marc",
+                "Mulligan",
+                "Dublin");
+
+        id = db.insertPerson(
+                "Patrick",
+                "Bezy",
+                "Limerick");
     }
-
-
 }
 
 

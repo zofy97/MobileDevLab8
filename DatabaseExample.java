@@ -1,4 +1,4 @@
-package com.example.d18123347.lab6;
+package com.example.d18123347.lab8;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,7 +13,7 @@ public class DatabaseExample
     // database columns
     private static final String KEY_ROWID 	    = "_id";
     private static final String KEY_FIRSTNAME 	= "first_name";
-    private static final String KEY_SURNAME 	    = "surname";
+    private static final String KEY_SURNAME 	= "surname";
     private static final String KEY_CITY 	    = "city";
     private static final String DATABASE_NAME 	= "Contacts";
     private static final String DATABASE_TABLE 	= "Contact_Details";
@@ -106,6 +106,25 @@ public class DatabaseExample
                                 KEY_CITY
                         },
                 null, null, null, null, null);
+    }
+
+    public  Cursor getCityPerson(String city) throws SQLException
+    {
+        Cursor mCursor =
+                db.query(DATABASE_TABLE, new String[]
+                                {
+                                        KEY_ROWID,
+                                        KEY_FIRSTNAME,
+                                        KEY_SURNAME,
+                                        KEY_CITY
+                                },
+                        KEY_CITY + "=" + "'" + city + "'",  null, null, null, null, null);
+
+        if (mCursor != null)
+        {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
     }
 
     public Cursor getPerson(long rowId) throws SQLException
